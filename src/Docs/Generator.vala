@@ -85,6 +85,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 	private static string output_directory;
 	private static string metadata_path;
 	private static string docletpath;
+	private static string example_generator_directory;
 	private static bool download_images;
 	private static string prefix;
 	private static bool skip_existing;
@@ -125,6 +126,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		{ "target-glib", 0, 0, OptionArg.STRING, ref target_glib, "Target version of glib for code generation", "MAJOR.MINOR" },
 		{ "download-images", 0, 0, OptionArg.NONE, ref download_images, "Download images", null },
 		{ "doclet", 0, 0, OptionArg.STRING, ref docletpath, "Name of an included doclet or path to custom doclet", "PLUGIN"},
+		{ "example-generator-directory", 0, 0, OptionArg.STRING, ref example_generator_directory, "Look for example generator in DIRECTORY", "DIRECTORY"},
 		{ "vapidir", 0, 0, OptionArg.FILENAME_ARRAY, ref vapidirs, "Look for package bindings in DIRECTORY", "[DIRECTORY]"},
 		{ "skip-existing", 0, 0, OptionArg.NONE, ref skip_existing, "Skip existing packages", null },
 		{ "no-check-certificate", 0, 0, OptionArg.NONE, ref wget_no_check_certificate, "Pass --no-check-certificate to wget", null },
@@ -888,7 +890,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 				string? standard_output = null;
 				string? standard_error = null;
 
-				string command = "./build/valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_path, output, "documentation/%s/wiki".printf (pkg.name));
+				string command = "\"%s\"/valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_generator_directory, example_path, output, "documentation/%s/wiki".printf (pkg.name));
 				Process.spawn_command_line_sync (command, out standard_output, out standard_error, out exit_status);
 
 				stdout.printf ("%s\n", command);
@@ -1316,6 +1318,10 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		if (docletpath == null) {
 			docletpath = ".";
+		}
+
+		if (example_generator_directory == null) {
+			example_generator_directory = ".";
 		}
 
 		if (vapidirs == null) {
