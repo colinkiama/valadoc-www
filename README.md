@@ -12,7 +12,7 @@ that can also be statically hosted and can easily be experimented with.
 In order to build the docs you will need the following:
 
 - `valadoc` >= 0.35.0
-- Node.js (LTS Version) - We recommend using [nvm](https://github.com/nvm-sh/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) for easily managing different node ersions.
+- Node.js (LTS Version) - We recommend using [nvm](https://github.com/nvm-sh/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) for easily managing different node versions.
 - 4 GB of free space
 
 On elementary OS or Ubuntu run:
@@ -31,17 +31,31 @@ pacman -S vala php
 
 Next, install JS dependencies:
 
-After you have `valadoc` installed, you can move to building the documentation. First build the generator program:
+After you have `valadoc` installed, you can move to building the documentation.
+
+First make sure that you are currently the root of the project.
+
+Also, there's a chance that these build scripts may not be have permissions to run at first. Run the following command to give the build scripts executable permissions so that they can run on your machine:
+
+```sh
+chmod +x ./task/*
+```
+
+Now, to build the programs and assets needed to generated the website run this command:
 
 ```sh
 ./task/build
 ```
 
-Now run the generator program:
+Now run this command to generate the website:
 
 ```sh
 ./task/run
 ```
+
+This may take a while since it's generating documentation for a lot of packages. Here are some alternative commands to run if you only need documentation for a specific set of packages:
+
+(List the preset commands)
 
 ## Build Options
 

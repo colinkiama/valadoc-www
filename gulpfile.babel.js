@@ -85,24 +85,9 @@ gulp.task('styles', () => {
 })
 
 /**
- * php
- * Copies over php files to production folder
- *
- * @return {Task} - a gulp task
- */
-gulp.task('php', () => {
-  const base = 'data'
-  const src = ['data/**/*.php']
-  const dest = 'valadoc.org'
-
-  return gulp.src(src, { base })
-    .pipe(gulp.dest(dest))
-})
-
-/**
  * default
  * Runs all needed files for production environment
  *
  * @return {Task} - a gulp task
  */
-gulp.task('default', gulp.parallel('images', 'scripts', 'styles', 'php'))
+gulp.task('default', gulp.parallel('images', 'scripts', 'styles'))

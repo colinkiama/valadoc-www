@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+#
+# Performs build operations of the website generator program
+# documentation example utility programs, and website assets. 
+
+# Install Node Modules
+if [ ! -d "./node_modules" ]; then
+    npm install
+fi
+
+# Setup meson build directory
+if [ ! -d "./build" ]; then
+    meson setup build
+fi
+
+# Build website generator and example utilities
+ninja -C build
+
+# Clone vala-girs and extra-vapis Git Repositories
+if [ ! -d girs ] && [ ! `git -C girs pull` ]; then
+    git clone https://github.com/nemequ/vala-girs.git girs --depth 1
+fi
+
+if [ ! -d extra-vapis ] && [ ! `git -C extra-vapis pull` ]; then 
+    git clone https://gitlab.gnome.org/GNOME/vala-extra-vapis.git extra-vapis --depth 1
+fi
+
+# Optimise and copy website assets to outptut directory
+npm run build
