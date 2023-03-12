@@ -1,0 +1,38 @@
+#!/usr/bin/env sh
+#
+# Generates the documentation website from
+# documentation data from various sources
+
+VALAC=${VALAC:-"valac"}
+PACKAGES=${PACKAGES:-"--all"}
+GENERATOR_OPTS=${GENERATOR_OPTS:-"--disable-devhelp"}
+VALAC_VERSION=${VALAC_VERSION:-"$(${VALAC} --api-version | awk -F. '{ print "0."$2 }')"}
+# shellcheck disable=2046
+echo "${VALAC_VERSION}"
+# shellcheck disable=2086
+VAPIDIR=${VAPIDIR:-"$(pkg-config --variable vapidir libvala-${VALAC_VERSION})"}
+PREFIX=${PREFIX:-"stable"}
+DOCLET_PATH=${DOCLET_PATH:-"./build/"}
+
+# Clear Temporary Directory
+rm -rf tmp/
+
+if [ ! -f "./build/generator" ]; then
+    ## Output error message to stderror stream
+    >&2 echo "Error: Generator program not found in './build' directory"
+fi
+
+# Testing only (Mini package preset)
+# PACKAGES="glib-2.0 gio-2.0 gobject-2.0"
+
+# Run generator program
+eval ./build/generator \
+		--vapidir "${VAPIDIR}" \
+		--vapidir "extra-vapis/" --vapidir "girs/vala/vapi/" \
+		--prefix "${PREFIX}" \
+		--target-glib 2.98 \
+        --doclet "${DOCLET_PATH}" \
+		--download-images \
+		--no-check-certificate \
+		"${GENERATOR_OPTS}" \
+		"${PACKAGES}"

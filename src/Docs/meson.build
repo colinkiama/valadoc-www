@@ -1,11 +1,11 @@
-# Setup Generator Variables
-generator_deps = [
+# Setup documentation generator variables
+docs_generator_deps = [
     dependency('gee-0.8'),
     dependency('gio-2.0'),
     dependency('valadoc-@0@'.format(valadoc_version)),
 ]
 
-generator_sources = files(
+docs_generator_sources = files(
     'Doclet.vala',
     'Generator.vala',
     'LinkHelper.vala',

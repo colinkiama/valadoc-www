@@ -888,7 +888,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 				string? standard_output = null;
 				string? standard_error = null;
 
-				string command = "./valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_path, output, "documentation/%s/wiki".printf (pkg.name));
+				string command = "./build/valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_path, output, "documentation/%s/wiki".printf (pkg.name));
 				Process.spawn_command_line_sync (command, out standard_output, out standard_error, out exit_status);
 
 				stdout.printf ("%s\n", command);

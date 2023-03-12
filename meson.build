@@ -18,9 +18,11 @@ endif
 vala_vapi_dir = run_command('pkg-config', '--variable', 'vapidir', 'libvala-@0@'.format(valac_version), check: true)
 vala_flags = '-g -X -w'
 
-# Create generator
-subdir('src/Generator')
-executable('generator', generator_sources, dependencies: generator_deps)
+subdir('src/Docs')
+subdir('src/Example')
+
+# Create documentation generator
+executable('generator', docs_generator_sources, dependencies: docs_generator_deps)
 
 # Create Valadoc Doclet Module
 shared_module (
@@ -28,4 +30,8 @@ shared_module (
     dependencies: doclet_module_deps,
 )
 
-# subdir('src/Example')
+# Create example generator
+executable('valadoc-example-gen', example_generator_sources, dependencies: example_generator_deps)
+
+# Create example tester
+executable('valadoc-example-tester', example_tester_sources, dependencies: examlpe_tester_deps)

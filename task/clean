@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+#
+# Erase generated files and assets
+
+# Files
+rm -f build/*.so
+rm -f build/*.h
+rm -f build/*.vapi
+rm -f build/valadoc-example-tester
+rm -f build/valadoc-example-gen
+rm -f build/generator
+rm -f documentation/*/wiki/example-listing.valadoc
+rm -f documentation/*/wiki/example-listing-*.valadoc
+rm -f documentation/*/wiki/widget-gallery.valadoc
+rm -f documentation/*/wiki/devhelp-index.valadoc
+rm -f documentation/*/wiki/index.valadoc
+rm -f examples/*-examples.valadoc
+rm -f LOG
+
+# Directories
+rm -rf build
+rm -rf documentation/*/gallery-images
+rm -rf documentation/*/gir-images
+rm -rf extra-vapis
+rm -rf girs
+rm -rf tmp
+rm -rf valadoc.org
