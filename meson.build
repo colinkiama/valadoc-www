@@ -23,6 +23,9 @@ subdir('src/Generator')
 executable('generator', generator_sources, dependencies: generator_deps)
 
 # Create Valadoc Doclet Module
-shared_module('libdoclet', doclet_module_sources, dependencies: doclet_module_deps)
+shared_module (
+    'doclet', doclet_module_sources, 
+    dependencies: doclet_module_deps,
+)
 
 # subdir('src/Example')
