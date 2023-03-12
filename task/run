@@ -21,6 +21,7 @@ rm -rf tmp/
 if [ ! -f "./build/generator" ]; then
     ## Output error message to stderror stream
     >&2 echo "Error: Generator program not found in './build' directory"
+	exit 1
 fi
 
 # Testing only (Mini package preset)
