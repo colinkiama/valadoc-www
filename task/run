@@ -7,8 +7,6 @@ VALAC=${VALAC:-"valac"}
 PACKAGES=${PACKAGES:-"--all"}
 GENERATOR_OPTS=${GENERATOR_OPTS:-"--disable-devhelp"}
 VALAC_VERSION=${VALAC_VERSION:-"$(${VALAC} --api-version | awk -F. '{ print "0."$2 }')"}
-# shellcheck disable=2046
-echo "${VALAC_VERSION}"
 # shellcheck disable=2086
 VAPIDIR=${VAPIDIR:-"$(pkg-config --variable vapidir libvala-${VALAC_VERSION})"}
 PREFIX=${PREFIX:-"stable"}
@@ -20,7 +18,7 @@ rm -rf tmp/
 
 if [ ! -f "./build/generator" ]; then
     ## Output error message to stderror stream
-    >&2 echo "Error: Generator program not found in './build' directory"
+    >&2 echo "Error: Generator program not found in \"${PWD}/build\""
 	exit 1
 fi
 
