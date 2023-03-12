@@ -57,6 +57,26 @@ This may take a while since it's generating documentation for a lot of packages.
 
 (List the preset commands)
 
+## Development Commands
+
+Build:
+
+```sh
+./task/build
+```
+
+Run generator:
+
+```sh
+./task/run
+```
+
+Clean Project:
+
+```sh
+./task/clean
+```
+
 ## Build Options
 
 You can customise which Vala compiler you want to use by setting the `VALAC`
