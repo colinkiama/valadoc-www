@@ -13,6 +13,7 @@ echo "${VALAC_VERSION}"
 VAPIDIR=${VAPIDIR:-"$(pkg-config --variable vapidir libvala-${VALAC_VERSION})"}
 PREFIX=${PREFIX:-"stable"}
 DOCLET_PATH=${DOCLET_PATH:-"./build/"}
+EXAMPLE_GEN_DIR=${EXAMPLE_GEN_DIR:-"./build"}
 
 # Clear Temporary Directory
 rm -rf tmp/
@@ -32,7 +33,11 @@ eval ./build/generator \
 		--prefix "${PREFIX}" \
 		--target-glib 2.98 \
         --doclet "${DOCLET_PATH}" \
+        --example-generator-directory "${EXAMPLE_GEN_DIR}" \
 		--download-images \
 		--no-check-certificate \
 		"${GENERATOR_OPTS}" \
 		"${PACKAGES}"
+
+# Optimise and copy website assets to outptut directory
+npm run build

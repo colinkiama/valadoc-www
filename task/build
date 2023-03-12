@@ -26,6 +26,3 @@ fi
 if [ ! -d extra-vapis ] || ! git -C extra-vapis pull; then 
     git clone https://gitlab.gnome.org/GNOME/vala-extra-vapis.git extra-vapis --depth 1
 fi
-
-# Optimise and copy website assets to outptut directory
-npm run build
