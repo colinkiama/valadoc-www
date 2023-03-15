@@ -66,7 +66,7 @@
 			template_scope = new Template.Scope ();
 
 			var year_symbol = template_scope.get("year");
-			year_symbol.assign_double (new DateTime.now_local ().get_year ());
+			year_symbol.assign_string (new DateTime.now_local ().get_year ().to_string ());
 
 			var base_url_symbol = template_scope.get("base_url");
 			base_url_symbol.assign_string (Config.BASE_URL); 
