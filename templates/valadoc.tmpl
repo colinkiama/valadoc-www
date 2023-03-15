@@ -43,7 +43,9 @@
     <div id="sidebar">
         <ul class="navi_main" id="search-results"></ul>
         <div id="navigation-content">
-
+            {{if navigation}}
+            {{navigation}}
+            {{end}}
         </div>
     </div>
     <div id="content-wrapper">
@@ -55,7 +57,7 @@
     </div>
     <footer>
         Copyright ©
-        Valadoc.org | Documentation is licensed under the same terms as its upstream |
+        {{if year}}{{year}}{{end}} Valadoc.org | Documentation is licensed under the same terms as its upstream |
         <a href="https://github.com/vala-lang/valadoc-org/issues" target="_blank">Report an Issue</a>
     </footer>
     <script type="text/javascript" src="/scripts/fetch.js"></script>

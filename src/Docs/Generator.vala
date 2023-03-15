@@ -716,8 +716,9 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 	private void generate_index (string path) {
 		IndexRenderer renderer = new IndexRenderer ();
 		string index_content = renderer.render (path, sections);
-		//  var content_symbol = template_scope.get ("content");
-		//  content_symbol.assign_string (index_content ?? "");
+
+		var content_symbol = template_scope.get ("content");
+		content_symbol.assign_string (index_content ?? "");
 		template_scope.set_string ("content", index_content ?? "");
 
 		try {
@@ -726,13 +727,13 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			reporter.simple_error (null, "error: Can't copy data: %s", e.message);
 		}
 
-		var little_scope = new Template.Scope ();
-		var content_symbol = little_scope.get("content");
-		content_symbol.assign_string (index_content ?? "");
+		//  var little_scope = new Template.Scope ();
+		//  var content_symbol = little_scope.get("content");
+		//  content_symbol.assign_string (index_content ?? "");
 		
 		try {
-			//  FileUtils.set_contents (path, page_template.expand_string (template_scope));
-			FileUtils.set_contents (path, page_template.expand_string (little_scope));
+			FileUtils.set_contents (path, page_template.expand_string (template_scope));
+			//  FileUtils.set_contents (path, page_template.expand_string (little_scope));
 
 		} catch (GLib.Error ex) {
 			error ("%s", ex.message);

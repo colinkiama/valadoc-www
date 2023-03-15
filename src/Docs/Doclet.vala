@@ -63,8 +63,8 @@
 	
 		try {
 			page_template.parse_file (templateFile, null);
-			var scope = new Template.Scope ();
-			var year_symbol = scope.get("year");
+			template_scope = new Template.Scope ();
+			var year_symbol = template_scope.get("year");
 			year_symbol.assign_double (new DateTime.now_local ().get_year ());
 		} catch (GLib.Error ex) {
 			error ("%s\n", ex.message);
@@ -181,26 +181,27 @@
 		_renderer.render (page.documentation);
 		
 		
-		//  var content_symbol = template_scope.get ("content");
-		//  content_symbol.assign_string (content_builder.str ?? "");
-		//  print ("Wiki Content: %s\n", content_builder.str);
-		
-		//  var navigation_symbol = template_scope.get ("navigation");
-		//  navigation_symbol.assign_string ("");
-		//  template_scope.set_string ("navigation", "");
-
-		var my_scope = new Template.Scope ();
-		var content_symbol = my_scope.get ("content");
+		var content_symbol = template_scope.get ("content");
 		content_symbol.assign_string (content_builder.str ?? "");
 		print ("Wiki Content: %s\n", content_builder.str);
 		
-		var navigation_symbol = my_scope.get ("navigation");
+		var navigation_symbol = template_scope.get ("navigation");
 		navigation_symbol.assign_string ("");
-		my_scope.set_string ("navigation", "");
+		template_scope.set_string ("navigation", "");
+
+		//  var my_scope = new Template.Scope ();
+		//  var content_symbol = my_scope.get ("content");
+		//  content_symbol.assign_string (content_builder.str ?? "");
+		//  print ("Wiki Content: %s\n", content_builder.str);
+		
+		//  var navigation_symbol = my_scope.get ("navigation");
+		//  navigation_symbol.assign_string ("");
+		//  my_scope.set_string ("navigation", "");
 
 		
 		try {
-			FileUtils.set_contents (file_path, page_template.expand_string (my_scope));
+			FileUtils.set_contents (file_path, page_template.expand_string (template_scope));
+			//  FileUtils.set_contents (file_path, page_template.expand_string (my_scope));
 		} catch (GLib.Error ex) {
 			error ("%s", ex.message);
 		}
