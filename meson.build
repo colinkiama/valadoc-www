@@ -15,8 +15,10 @@ if valadoc_version == ''
     valadoc_version = valac_version
 endif
 
-vala_vapi_dir = run_command('pkg-config', '--variable', 'vapidir', 'libvala-@0@'.format(valac_version), check: true)
-vala_flags = '-g -X -w'
+base_url = get_option('base_url')
+
+conf_data = configuration_data()
+conf_data.set('BASE_URL', base_url)
 
 subdir('src/Docs')
 subdir('src/Example')

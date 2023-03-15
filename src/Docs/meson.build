@@ -6,11 +6,20 @@ docs_generator_deps = [
     dependency('template-glib-1.0'),
 ]
 
-docs_generator_sources = files(
-    'Doclet.vala',
-    'Generator.vala',
-    'LinkHelper.vala',
+config_vala = configure_file(
+    input: 'Config.vala.in',
+    output: 'Config.vala',
+    configuration: conf_data,
 )
+
+docs_generator_sources = [
+    files(
+        'Doclet.vala',
+        'Generator.vala',
+        'LinkHelper.vala',
+    ),
+    config_vala,
+]
 
 doclet_module_deps = [
     dependency('gee-0.8'),
@@ -18,7 +27,10 @@ doclet_module_deps = [
     dependency('template-glib-1.0'),
 ]
 
-doclet_module_sources = files(
-    'Doclet.vala',
-    'LinkHelper.vala',
-)
+doclet_module_sources = [
+    files(
+        'Doclet.vala',
+        'LinkHelper.vala',
+    ),
+    config_vala,
+]

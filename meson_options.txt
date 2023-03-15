@@ -1,2 +1,3 @@
 option('valac_version', type: 'string', value: '', description: 'Version of Vala compiler. Used to set versions of other Vala packages to use. Does not affect the valac compiler used when building.')
 option('valadoc_version', type: 'string', value: '', description: 'Version of valadoc to use. Allows you to use a different version of valadoc instead of the on that shares the valac_version')
+option('base_url', type: 'string', value: '', description: 'Base path to use when generating links.')

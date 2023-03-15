@@ -16,28 +16,28 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400%7CDroid+Serif:400%7CRoboto+Mono:400,500,700,400italic">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/styles/main.css" type="text/css">
-    <link rel="apple-touch-icon" href="/images/icon.png">
-    <link rel="shortcut icon" href="/images/favicon.ico">
-    <link rel="search" type="application/opensearchdescription+xml" title="Valadoc" href="/opensearch.xml">
+    <link rel="stylesheet" href="{{base_url}}/styles/main.css" type="text/css">
+    <link rel="apple-touch-icon" href="{{base_url}}/images/icon.png">
+    <link rel="shortcut icon" href="{{base_url}}/images/favicon.ico">
+    <link rel="search" type="application/opensearchdescription+xml" title="Valadoc" href="{{base_url}}/opensearch.xml">
 </head>
 
 <body>
     <nav>
-        <form action="/">
+        <form action="{{base_url}}/">
             <div id="search-box" itemscope itemprop="potentialAction" itemtype="http://schema.org/SearchAction">
-                <meta itemprop="target" content="/?q={query}">
+                <meta itemprop="target" content="{{base_url}}/?q={query}">
                 <meta itemprop="query-input" content="required name=query">
                 <input itemprop="query-input" id="search-field" type="search" placeholder="Search" autocomplete="off"
                     name="q" />
-                <img id="search-field-clear" src="/images/clean.svg" alt="Clear search" />
+                <img id="search-field-clear" src="{{base_url}}/images/clean.svg" alt="Clear search" />
             </div>
         </form>
-        <a class="title" href="/index.htm"><img alt="Valadoc" src="/images/logo.svg" /></a>
+        <a class="title" href="{{base_url}}/index.htm"><img alt="Valadoc" src="{{base_url}}/images/logo.svg" /></a>
         <ul>
             <li><a href="https://vala.dev/" target="_blank" title="Vala Official Website"><i class="fa fa-home"></i></a>
             <li><a href="https://www.reddit.com/r/vala/" target="_blank" title="reddit"><i class="fa fa-reddit"></i></a>
-            <li><a href="/markup.htm" title="Markup Info"><i class="fa fa-info-circle"></i></a>
+            <li><a href="{{base_url}}/markup.htm" title="Markup Info"><i class="fa fa-info-circle"></i></a>
         </ul>
     </nav>
     <div id="sidebar">
@@ -60,9 +60,9 @@
         {{if year}}{{year}}{{end}} Valadoc.org | Documentation is licensed under the same terms as its upstream |
         <a href="https://github.com/vala-lang/valadoc-org/issues" target="_blank">Report an Issue</a>
     </footer>
-    <script type="text/javascript" src="/scripts/fetch.js"></script>
-    <script type="text/javascript" src="/scripts/valadoc.js"></script>
-    <script type="text/javascript" src="/scripts/main.js"></script>
+    <script type="text/javascript" src="{{base_url}}/scripts/fetch.js"></script>
+    <script type="text/javascript" src="{{base_url}}/scripts/valadoc.js"></script>
+    <script type="text/javascript" src="{{base_url}}/scripts/main.js"></script>
 </body>
 
 </html>

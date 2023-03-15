@@ -57,15 +57,19 @@
 	
 
 	construct {
-		package_list_link = "/index.html";
+		package_list_link = Config.BASE_URL + "/index.html";
 		page_template = page_template = new Template.Template (null);
 		var templateFile = File.new_for_path ("templates/valadoc.tmpl");
 	
 		try {
 			page_template.parse_file (templateFile, null);
 			template_scope = new Template.Scope ();
+
 			var year_symbol = template_scope.get("year");
 			year_symbol.assign_double (new DateTime.now_local ().get_year ());
+
+			var base_url_symbol = template_scope.get("base_url");
+			base_url_symbol.assign_string (Config.BASE_URL); 
 		} catch (GLib.Error ex) {
 			error ("%s\n", ex.message);
 		}

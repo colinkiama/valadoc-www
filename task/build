@@ -2,15 +2,34 @@
 #
 # Performs build operations of the website generator program
 # documentation example utility programs, and website assets. 
+BASE_URL=${BASE_URL:-""}
+VALAC_VERSION=${VALAC_VERSION:-""}
+VALADOC_VERSION=${VALADOC_VERSION:-""}
 
 # Install Node Modules.
 if [ ! -d "./node_modules" ]; then
     npm install
 fi
 
-# Setup meson build directory.
-if [ ! -d "./build" ]; then
-    meson setup build
+BUILD_OPTIONS=''
+
+if [ -n "${BASE_URL}" ]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dbase_url=${BASE_URL}"
+fi
+
+if [ -n "${VALAC_VERSION}" ]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dvalac_version${VALAC_VERSION}"
+fi
+
+if [ -n "${VALADOC_VERSION}" ]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dvaladoc_version${VALADOC_VERSION}"
+fi
+
+# Setup meson build build directory and configure build options.
+if [ -d "./build" ]; then
+    eval meson setup"${BUILD_OPTIONS}" --reconfigure build
+else
+    eval meson setup"${BUILD_OPTIONS}" build
 fi
 
 # Build website generator and example utilities.
