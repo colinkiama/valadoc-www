@@ -180,28 +180,15 @@
 		_renderer.set_container (page);
 		_renderer.render (page.documentation);
 		
-		
 		var content_symbol = template_scope.get ("content");
-		content_symbol.assign_string (content_builder.str ?? "");
-		print ("Wiki Content: %s\n", content_builder.str);
+		content_symbol.assign_string (content_builder.str);
 		
 		var navigation_symbol = template_scope.get ("navigation");
 		navigation_symbol.assign_string ("");
 		template_scope.set_string ("navigation", "");
 
-		//  var my_scope = new Template.Scope ();
-		//  var content_symbol = my_scope.get ("content");
-		//  content_symbol.assign_string (content_builder.str ?? "");
-		//  print ("Wiki Content: %s\n", content_builder.str);
-		
-		//  var navigation_symbol = my_scope.get ("navigation");
-		//  navigation_symbol.assign_string ("");
-		//  my_scope.set_string ("navigation", "");
-
-		
 		try {
 			FileUtils.set_contents (file_path, page_template.expand_string (template_scope));
-			//  FileUtils.set_contents (file_path, page_template.expand_string (my_scope));
 		} catch (GLib.Error ex) {
 			error ("%s", ex.message);
 		}
@@ -264,10 +251,10 @@
 		write_package_content (package, package);
 
 		var content_symbol = template_scope.get ("content");
-		content_symbol.assign_string (content_builder.str ?? "");
+		content_symbol.assign_string (content_builder.str);
 		
 		var navigation_symbol = template_scope.get("navigation");
-		navigation_symbol.assign_string (navigation_builder.str ?? "");
+		navigation_symbol.assign_string (navigation_builder.str);
 
 		try {
 			FileUtils.set_contents (index_path, page_template.expand_string (template_scope));
@@ -284,8 +271,6 @@
 		string rpath = this.get_real_path (ns);
 
 		if (ns.name != null) {
-			string file_path = rpath + ".html";
-
 			register_node (ns);
 
 			var navigation_builder = new StringBuilder ();
@@ -298,14 +283,14 @@
 			_renderer.set_writer (writer);
 			write_namespace_content (ns, ns);
 
-			//  var content_symbol = template_scope.get ("content");
-			//  content_symbol.assign_string (content_builder.str ?? "");
+			var content_symbol = template_scope.get ("content");
+			content_symbol.assign_string (content_builder.str);
 			
-			//  var navigation_symbol = template_scope.get("navigation");
-			//  navigation_symbol.assign_string (navigation_builder.str ?? "");
+			var navigation_symbol = template_scope.get("navigation");
+			navigation_symbol.assign_string (navigation_builder.str);
 
 			try {
-				FileUtils.set_contents (file_path, page_template.expand_string (template_scope));
+				FileUtils.set_contents (rpath, page_template.expand_string (template_scope));
 			} catch (GLib.Error ex) {
 				error ("%s", ex.message);
 			}
@@ -317,8 +302,6 @@
 	private void process_node (Api.Node node, bool accept_all_children) {
 		string rpath = this.get_real_path (node);
 		register_node (node);
-
-		string file_path = rpath + ".html";
 
 		var navigation_builder = new StringBuilder ();
 		writer = new Html.MarkupWriter.builder (navigation_builder, false);
@@ -336,13 +319,13 @@
 		write_symbol_content (node);
 
 		var content_symbol = template_scope.get ("content");
-		content_symbol.assign_string (content_builder.str ?? "");
+		content_symbol.assign_string (content_builder.str);
 		
 		var navigation_symbol = template_scope.get("navigation");
-		navigation_symbol.assign_string (navigation_builder.str ?? "");
+		navigation_symbol.assign_string (navigation_builder.str);
 
 		try {
-			FileUtils.set_contents (file_path, page_template.expand_string (template_scope));
+			FileUtils.set_contents (rpath, page_template.expand_string (template_scope));
 		} catch (GLib.Error ex) {
 			error ("%s", ex.message);
 		}
