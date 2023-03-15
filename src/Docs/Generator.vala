@@ -717,6 +717,9 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		IndexRenderer renderer = new IndexRenderer ();
 		string index_content = renderer.render (path, sections);
 
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string ("valadoc-www - Learn Vala, do Future");
+
 		var content_symbol = template_scope.get ("content");
 		content_symbol.assign_string (index_content);
 		template_scope.set_string ("content", index_content);

@@ -180,6 +180,9 @@
 		_renderer.set_container (page);
 		_renderer.render (page.documentation);
 		
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string (page.name);
+		
 		var content_symbol = template_scope.get ("content");
 		content_symbol.assign_string (content_builder.str);
 		
@@ -250,6 +253,9 @@
 		_renderer.set_writer (writer);
 		write_package_content (package, package);
 
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string (pkg_name);
+
 		var content_symbol = template_scope.get ("content");
 		content_symbol.assign_string (content_builder.str);
 		
@@ -282,6 +288,9 @@
 			writer = new Html.MarkupWriter.builder (content_builder, false);
 			_renderer.set_writer (writer);
 			write_namespace_content (ns, ns);
+
+			var title_symbol = template_scope.get ("title");
+			title_symbol.assign_string (ns.get_full_name ());
 
 			var content_symbol = template_scope.get ("content");
 			content_symbol.assign_string (content_builder.str);
@@ -317,6 +326,9 @@
 		writer = new Html.MarkupWriter.builder (content_builder, false);
 		_renderer.set_writer (writer);
 		write_symbol_content (node);
+
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string (node.get_full_name ());
 
 		var content_symbol = template_scope.get ("content");
 		content_symbol.assign_string (content_builder.str);
