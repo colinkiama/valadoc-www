@@ -5,7 +5,7 @@ Learn Vala, do future.
 This project generates a version of the valadoc.org website that is statically generated.
 
 The goal is for people to easily have a local copy of valadoc.org,
-that can also be statically hosted and can easily be experimented with.
+that can also be statically hosted and can easily be experimented on.
 
 ## Build Instructions
 
