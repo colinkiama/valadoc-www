@@ -20,13 +20,13 @@ On elementary OS or Ubuntu run:
 ```bash
 sudo add-apt-repository ppa:vala-team
 sudo apt update
-sudo apt install valac valadoc libvaladoc-dev unzip
+sudo apt install valac valadoc libvaladoc-dev libtemplate-glib-1.0-dev unzip
 ```
 
 Arch or derivatives run:
 
 ```bash
-pacman -S vala php
+pacman -S vala template-glib php
 ```
 
 Next, install JS dependencies:
