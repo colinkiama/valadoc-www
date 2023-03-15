@@ -20,6 +20,7 @@
  * 	Florian Brosch <flo.brosch@gmail.com>
  */
 
+ using Template;
  public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 	public const string css_path_package = "styles/main.css";
 	public const string css_path_wiki = "../styles/main.css";
@@ -28,6 +29,9 @@
 	public const string js_path_package = "scripts/main.js";
 	public const string js_path_wiki = "../scripts/main.js";
 	public const string js_path = "../scripts/main.js";
+	
+	public Template.Template page_template;
+	public Template.Scope template_scope;
 
 	private IndexMarkupWriter index_xml;
 
@@ -50,9 +54,21 @@
 			return name == "node";
 		}
 	}
+	
 
 	construct {
-		package_list_link = "/index.htm";
+		package_list_link = "/index.html";
+		page_template = page_template = new Template.Template (null);
+		var templateFile = File.new_for_path ("templates/valadoc.tmpl");
+	
+		try {
+			page_template.parse_file (templateFile, null);
+			var scope = new Template.Scope ();
+			var year_symbol = scope.get("year");
+			year_symbol.assign_double (new DateTime.now_local ().get_year ());
+		} catch (GLib.Error ex) {
+			error ("%s\n", ex.message);
+		}
 	}
 
 	private void register_package_start (Api.Package pkg, string path) {
@@ -155,16 +171,39 @@
 	}
 
 	protected override void write_wiki_page (WikiPage page, string contentp, string css_path, string js_path, string pkg_name) {
-		string basic_path = Path.build_filename(contentp, page.name.substring (0, page.name.length-7).replace ("/", ".")+"htm");
+		string file_path = Path.build_filename(contentp, page.name.substring (0, page.name.length-7).replace ("/", ".")+"html");
 
-		GLib.FileStream file = GLib.FileStream.open (basic_path + ".content.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var content_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (content_builder, false);
 		_renderer.set_writer (writer);
-
+		
 		_renderer.set_container (page);
 		_renderer.render (page.documentation);
+		
+		
+		//  var content_symbol = template_scope.get ("content");
+		//  content_symbol.assign_string (content_builder.str ?? "");
+		//  print ("Wiki Content: %s\n", content_builder.str);
+		
+		//  var navigation_symbol = template_scope.get ("navigation");
+		//  navigation_symbol.assign_string ("");
+		//  template_scope.set_string ("navigation", "");
 
-		file = GLib.FileStream.open (basic_path + ".navi.tpl", "w");
+		var my_scope = new Template.Scope ();
+		var content_symbol = my_scope.get ("content");
+		content_symbol.assign_string (content_builder.str ?? "");
+		print ("Wiki Content: %s\n", content_builder.str);
+		
+		var navigation_symbol = my_scope.get ("navigation");
+		navigation_symbol.assign_string ("");
+		my_scope.set_string ("navigation", "");
+
+		
+		try {
+			FileUtils.set_contents (file_path, page_template.expand_string (my_scope));
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 	}
 
 	public override void process (Settings settings, Api.Tree tree, ErrorReporter reporter) {
@@ -210,19 +249,30 @@
 		FileStream index_xml_file = FileStream.open (GLib.Path.build_filename (path, "index.xml"), "w");
 		index_xml = new IndexMarkupWriter (index_xml_file);
 
-		string index_path = GLib.Path.build_filename (path, "index.htm");
+		string index_path = GLib.Path.build_filename (path, "index.html");
 		register_package_start (package, index_path);
 
-		GLib.FileStream file = GLib.FileStream.open (index_path + ".navi.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var navigation_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (navigation_builder, false);
 		_renderer.set_writer (writer);
 		write_navi_package (package);
 
-		file = GLib.FileStream.open (index_path + ".content.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var content_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (content_builder, false);
 		_renderer.set_writer (writer);
 		write_package_content (package, package);
 
+		var content_symbol = template_scope.get ("content");
+		content_symbol.assign_string (content_builder.str ?? "");
+		
+		var navigation_symbol = template_scope.get("navigation");
+		navigation_symbol.assign_string (navigation_builder.str ?? "");
+
+		try {
+			FileUtils.set_contents (index_path, page_template.expand_string (template_scope));
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 
 		package.accept_all_children (this);
 
@@ -233,17 +283,31 @@
 		string rpath = this.get_real_path (ns);
 
 		if (ns.name != null) {
+			string file_path = rpath + ".html";
+
 			register_node (ns);
 
-			GLib.FileStream file = GLib.FileStream.open (rpath + ".navi.tpl", "w");
-			writer = new Html.MarkupWriter (file, false);
+			var navigation_builder = new StringBuilder ();
+			writer = new Html.MarkupWriter.builder (navigation_builder, false);	
 			_renderer.set_writer (writer);
 			write_navi_symbol (ns);
 
-			file = GLib.FileStream.open (rpath + ".content.tpl", "w");
-			writer = new Html.MarkupWriter (file, false);
+			var content_builder = new StringBuilder ();
+			writer = new Html.MarkupWriter.builder (content_builder, false);
 			_renderer.set_writer (writer);
 			write_namespace_content (ns, ns);
+
+			//  var content_symbol = template_scope.get ("content");
+			//  content_symbol.assign_string (content_builder.str ?? "");
+			
+			//  var navigation_symbol = template_scope.get("navigation");
+			//  navigation_symbol.assign_string (navigation_builder.str ?? "");
+
+			try {
+				FileUtils.set_contents (file_path, page_template.expand_string (template_scope));
+			} catch (GLib.Error ex) {
+				error ("%s", ex.message);
+			}
 		}
 
 		ns.accept_all_children (this);
@@ -253,9 +317,10 @@
 		string rpath = this.get_real_path (node);
 		register_node (node);
 
+		string file_path = rpath + ".html";
 
-		GLib.FileStream file = GLib.FileStream.open (rpath + ".navi.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var navigation_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (navigation_builder, false);
 		_renderer.set_writer (writer);
 
 		if (is_internal_node (node)) {
@@ -264,12 +329,22 @@
 			write_navi_leaf_symbol (node);
 		}
 
-
-		file = GLib.FileStream.open (rpath + ".content.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var content_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (content_builder, false);
 		_renderer.set_writer (writer);
 		write_symbol_content (node);
 
+		var content_symbol = template_scope.get ("content");
+		content_symbol.assign_string (content_builder.str ?? "");
+		
+		var navigation_symbol = template_scope.get("navigation");
+		navigation_symbol.assign_string (navigation_builder.str ?? "");
+
+		try {
+			FileUtils.set_contents (file_path, page_template.expand_string (template_scope));
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 
 		if (accept_all_children) {
 			node.accept_all_children (this);

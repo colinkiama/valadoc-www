@@ -462,7 +462,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 	}
 
 	private abstract class Renderer {
-		public abstract void render (string path, Gee.Collection<Node> sections);
+		public abstract string render (string path, Gee.Collection<Node> sections);
 		public abstract void render_section (Section section);
 		public abstract void render_package (Package pkg);
 		public abstract void render_external_package (ExternalPackage pkg);
@@ -496,9 +496,10 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		return packages;
 	}
 
-	private void generate_navigation (string path) {
-		GLib.FileStream file = GLib.FileStream.open (path, "w");
-		var writer = new Html.MarkupWriter (file, false);
+	private void generate_navigation () {
+		var navigation_builder = new StringBuilder ();
+		var writer = new Html.MarkupWriter.builder (navigation_builder, false);
+		
 
 		writer.start_tag ("div", {"class", "site_navigation"});
 		writer.start_tag ("ul");
@@ -517,6 +518,9 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		writer.end_tag ("ul");
 		writer.end_tag ("div");
+
+		var navigation_symbol = template_scope.get ("navigation");
+		navigation_symbol.assign_string (navigation_builder.str ?? "");
 	}
 
 	private class IndexRenderer : Renderer {
@@ -525,10 +529,10 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		private Html.MarkupWriter writer;
 		private int header_level = HEADER_LEVEL_START;
 
-		public override void render (string path, Gee.Collection<Node> sections) {
-			GLib.FileStream file = GLib.FileStream.open (path, "w");
-			writer = new Html.MarkupWriter (file, false);
-
+		public override string render (string path, Gee.Collection<Node> sections) {
+			var content_builder = new StringBuilder ();
+			writer = new Html.MarkupWriter.builder (content_builder, false);
+	
 			// Intro:
 			writer.start_tag ("h1").text ("Guides & References").end_tag ("h1");
 
@@ -583,6 +587,8 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			}
 
 			writer = null;
+
+			return content_builder.str;
 		}
 
 		public override void render_section (Section section) {
@@ -709,20 +715,35 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 	private void generate_index (string path) {
 		IndexRenderer renderer = new IndexRenderer ();
-		renderer.render (path, sections);
+		string index_content = renderer.render (path, sections);
+		//  var content_symbol = template_scope.get ("content");
+		//  content_symbol.assign_string (index_content ?? "");
+		template_scope.set_string ("content", index_content ?? "");
 
 		try {
 			copy_data ();
 		} catch (Error e) {
 			reporter.simple_error (null, "error: Can't copy data: %s", e.message);
 		}
+
+		var little_scope = new Template.Scope ();
+		var content_symbol = little_scope.get("content");
+		content_symbol.assign_string (index_content ?? "");
+		
+		try {
+			//  FileUtils.set_contents (path, page_template.expand_string (template_scope));
+			FileUtils.set_contents (path, page_template.expand_string (little_scope));
+
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 	}
 
 	public void generate (string path) {
 		stdout.printf ("generate index ...\n");
 
-		generate_navigation (path + ".navi.tpl");
-		generate_index (path + ".content.tpl");
+		generate_navigation ();
+		generate_index (path);
 	}
 
 	public void regenerate_all_known_packages () throws Error {
@@ -1366,7 +1387,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 				return -1;
 			}
 
-			string index = Path.build_path (Path.DIR_SEPARATOR_S, output_directory, "index.htm");
+			string index = Path.build_path (Path.DIR_SEPARATOR_S, output_directory, "index.html");
 			generator.generate (index);
 
 			generator.generate_configs (output_directory);
