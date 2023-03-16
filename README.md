@@ -55,7 +55,7 @@ Now run this command to generate the website:
 
 This may take a while since it's generating documentation for a lot of packages.
 If you don't want to download over 600MB of VAPI files then generate the website
-then I suggest [Setting some configuration options](#Configuration Options).
+then I suggest [tyring out some configuration options](#configuration-options).
 
 The generated website will be available in a directory called `valadoc.org`.
 You can open up the `index.html` file in a web browser to start browsing the documentation.
