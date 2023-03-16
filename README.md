@@ -26,7 +26,7 @@ sudo apt install valac valadoc libvaladoc-dev libtemplate-glib-1.0-dev unzip
 Arch or derivatives run:
 
 ```bash
-pacman -S vala template-glib php
+pacman -S vala template-glib
 ```
 
 Next, install JS dependencies:
