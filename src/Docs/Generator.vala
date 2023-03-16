@@ -722,7 +722,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		var content_symbol = template_scope.get ("content");
 		content_symbol.assign_string (index_content);
-		template_scope.set_string("base_url",  Config.BASE_URL == "" ? "./" : Config.BASE_URL);
+		template_scope.set_string("base_url",  Config.BASE_URL == "" ? "." : Config.BASE_URL);
 
 		try {
 			copy_data ();
