@@ -20,13 +20,13 @@ On elementary OS or Ubuntu run:
 ```bash
 sudo add-apt-repository ppa:vala-team
 sudo apt update
-sudo apt install valac valadoc libvaladoc-dev libtemplate-glib-1.0-dev unzip
+sudo apt install meson ninja-build valac valadoc libvaladoc-dev libtemplate-glib-1.0-dev unzip
 ```
 
 Arch or derivatives run:
 
 ```bash
-pacman -S vala template-glib
+pacman -S meson ninja vala template-glib
 ```
 
 Next, install JS dependencies:
