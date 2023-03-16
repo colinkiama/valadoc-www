@@ -110,7 +110,15 @@ are saved, even if you run the `task/build` command again with no environment va
 
 ### Presets
 
-(List the preset options)
+By default, documentation is generated for all packages. However, you can customise
+which packages get generated using the `PACKAGES` variable. This can get quite tedious so there is also a `PRESET` variable
+that can select a range of packages for you. Here is what you can use:
+
+| Value      | Description                                                              |
+| ---------- | ------------------------------------------------------------------------ |
+| core       | Core GNOME packages, `posix` and `linux` packages                        |
+| gtk4       | A variety of packages to help you make GUI Applications powered by GTK 4 |
+| elementary | An extension of the `gtk4` preset with elementary OS specific packages   |
 
 ## Add New Packages
 
