@@ -53,9 +53,11 @@ Now run this command to generate the website:
 ./task/run
 ```
 
-This may take a while since it's generating documentation for a lot of packages. Here are some alternative commands to run if you only need documentation for a specific set of packages:
+This may take a while since it's generating documentation for a lot of packages.
+If you don't want to download over 600MB of VAPI files then generate the website
+then I suggest [Setting some configuration options](#Configuration Options).
 
-The generate website will be available in a directory called `valadoc.org`.
+The generated website will be available in a directory called `valadoc.org`.
 You can open up the `index.html` file in a web browser to start browsing the documentation.
 
 If you're planning on serving the website on a HTTP server (or you want to use a dev server), feel free to use the `BASE_URL` environment variable.
