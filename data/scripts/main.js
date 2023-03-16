@@ -3,7 +3,7 @@
 
 /* eslint camelcase: "off", no-unused-vars: "off" */
 
-function get_path (path) {
+function get_path(path) {
   var pos = path.lastIndexOf('/')
   if (pos < 0) {
     return ''
@@ -12,7 +12,7 @@ function get_path (path) {
   return path.substring(pos, -1) + '/'
 }
 
-function toggle_box (self, id) {
+function toggle_box(self, id) {
   var element = document.getElementById(id)
   if (!element) {
     return

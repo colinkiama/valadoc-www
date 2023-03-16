@@ -57,7 +57,7 @@
 	
 
 	construct {
-		package_list_link = Config.BASE_URL + "/index.html";
+		package_list_link = (Config.BASE_URL == "" ? "./" : Config.BASE_URL + "/")  + "index.html";
 		page_template = page_template = new Template.Template (null);
 		var templateFile = File.new_for_path ("templates/valadoc.tmpl");
 	
@@ -69,7 +69,7 @@
 			year_symbol.assign_string (new DateTime.now_local ().get_year ().to_string ());
 
 			var base_url_symbol = template_scope.get("base_url");
-			base_url_symbol.assign_string (Config.BASE_URL); 
+			base_url_symbol.assign_string ((Config.BASE_URL == "" ? ".." : Config.BASE_URL)); 
 		} catch (GLib.Error ex) {
 			error ("%s\n", ex.message);
 		}

@@ -324,8 +324,8 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		}
 
 		public Package (string name, string? girs = null, string? maintainers = null, string? home = null, string? c_docs = null, string? vapi_image_source = null, string? gallery = null, string? flags = null, bool is_deprecated = false) {
-			devhelp_link = "/" + name + "/" + name + ".tar.bz2";
-			online_link = "/" + name + "/index.htm";
+			devhelp_link = (Config.BASE_URL == "" ? "./" : Config.BASE_URL + "/") + name + "/" + name + ".tar.bz2";
+			online_link = (Config.BASE_URL == "" ? "./" + name + "/" : Config.BASE_URL + "/" + name + "/") + "index.html";
 			this.is_deprecated = is_deprecated;
 			this.maintainers = maintainers;
 			this.gir_names = girs != null ? girs.split (",") : null;
@@ -722,7 +722,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		var content_symbol = template_scope.get ("content");
 		content_symbol.assign_string (index_content);
-		template_scope.set_string ("content", index_content);
+		template_scope.set_string("base_url",  Config.BASE_URL == "" ? "./" : Config.BASE_URL);
 
 		try {
 			copy_data ();
