@@ -53,8 +53,10 @@ Now run this command to generate the website:
 ./task/run
 ```
 
+By default, these commands will generate documentation for all packages.
+
 This may take a while since it's generating documentation for a lot of packages.
-If you don't want to download over 600MB of VAPI files then generate the website
+If you aren't planning on generating documentation for all packages in valadoc.org
 then I suggest [tyring out some configuration options](#configuration-options).
 
 The generated website will be available in a directory called `valadoc.org`.
@@ -89,11 +91,22 @@ Clean Project:
 
 ### Environment Variables
 
-You can customise which Vala compiler you want to use by setting the `VALAC`
-environment variable when running the meson commands.
+You can override which Vala compiler you want to use by setting the `VALAC`
+environment variable when running the `task/build` commands. Meson is aware
+of it.
 
-There are plenty more ways to customise the behaviour of the site generator.
+There are also plenty of ways to customise the behaviour of the site generator.
 Check out the top of the `task/build` and `task/run` files for environment variables that you can set to change the behaviour to your liking.
+
+Two more important options to note are these variables that affect the `task/build` script.
+
+`DISABLE_GIRS_REPO` and `DISABLE_EXTRA_VAPIS_REPO`. By setting them to `true` (or any other value that isn't `false` or an empty string), the `task/build` script skips the steps of cloning each respective Git repository. This helps you save a lot of space and time, especially when you disable the `vala-girs` with the `DISABLE_GIRS_REPO` option (it's takes up 200MB worth of disk space).
+
+Warning: Due to the way meson works, if you set some of these variables, the options
+are saved, even if you run the `task/build` command again with no environment variables the next time. In cases where you just want the default behaviour to happen, it's recommended to either:
+
+- Delete the `build` directory
+- Run the `task/clean` script
 
 ### Presets
 
