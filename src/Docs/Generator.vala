@@ -743,6 +743,29 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		generate_navigation ();
 		generate_index (path);
+		generate_stylesheet ();
+	}
+
+	public void generate_stylesheet () {
+		var stylesheet_template = new Template.Template (null);
+		var stylesheet_template_file = GLib.File.new_for_path("templates/main.css.tmpl");
+
+		try {
+			stylesheet_template.parse_file (stylesheet_template_file, null);
+
+			var stylesheet_template_scope = new Template.Scope ();
+			stylesheet_template_scope.set_string (
+				"base_url", 
+				Config.BASE_URL == "" ? ".." : Config.BASE_URL
+			);
+
+			FileUtils.set_contents (
+				"data/styles/main.css", 
+				stylesheet_template.expand_string (stylesheet_template_scope)
+			);
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 	}
 
 	public void regenerate_all_known_packages () throws Error {

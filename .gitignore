@@ -5,6 +5,7 @@
 *.dSYM
 *~
 /configgen
+/data/styles/main.css
 /documentation/*/gallery-images/*
 /documentation/*/gir-images/*
 /documentation/*/vapi-images/*

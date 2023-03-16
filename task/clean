@@ -9,6 +9,7 @@ rm -f build/*.vapi
 rm -f build/valadoc-example-tester
 rm -f build/valadoc-example-gen
 rm -f build/generator
+rm -f data/styles/main.css
 rm -f documentation/*/wiki/example-listing.valadoc
 rm -f documentation/*/wiki/example-listing-*.valadoc
 rm -f documentation/*/wiki/widget-gallery.valadoc
