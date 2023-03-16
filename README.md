@@ -55,7 +55,13 @@ Now run this command to generate the website:
 
 This may take a while since it's generating documentation for a lot of packages. Here are some alternative commands to run if you only need documentation for a specific set of packages:
 
-(List the preset commands)
+The generate website will be available in a directory called `valadoc.org`.
+You can open up the `index.html` file in a web browser to start browsing the documentation.
+
+If you're planning on serving the website on a HTTP server (or you want to use a dev server), feel free to use the `BASE_URL` environment variable.
+
+This will help you avoid asset loading issues with stylesheets and scripts in
+when the site is hosted on a subpath e.g when you host the site on GitHub Pages.
 
 ## Development Commands
 
@@ -77,10 +83,19 @@ Clean Project:
 ./task/clean
 ```
 
-## Build Options
+## Configuration Options
+
+### Environment Variables
 
 You can customise which Vala compiler you want to use by setting the `VALAC`
 environment variable when running the meson commands.
+
+There are plenty more ways to customise the behaviour of the site generator.
+Check out the top of the `task/build` and `task/run` files for environment variables that you can set to change the behaviour to your liking.
+
+### Presets
+
+(List the preset options)
 
 ## Add New Packages
 
