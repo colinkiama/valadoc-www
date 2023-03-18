@@ -33,11 +33,10 @@ jobs:
           -y \
           --no-install-recommends \
           gcc \
-          gobject-introspection \
+          libgirepository1.0-dev \
           libgee-0.8-dev \
           git \
           libguestfs-gobject-dev \
-          libtemplate-glib-1.0-0 \
           libtemplate-glib-1.0-dev \
           libvaladoc-0.58-dev \
           meson \
