@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -42,20 +47,12 @@ jobs:
           valadoc \
           wget \
           xsltproc \
-          make \
+          make
 
       - name: Build the documentation
         run: |
           task/build GENERATOR_OPTS="" \
           && PRESET=core task/run
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Build Static Assets
-        run: npm ci && npm run build
 
       - name: Upload GitHub Pages artifiact
         uses: actions/upload-pages-artifact@v1.0.7
