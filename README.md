@@ -221,7 +221,7 @@ Vala.Symbol.Name
 
 - Your valadoc version does not support the requested vala version. Install a recent vala version and
   recompile valadoc.
-- Change `VALAC_VERSION` in Makefile.
+- Change `VALAC_VERSION` in `task/build` and/or `task/run`.
 
 Other errors:
 
