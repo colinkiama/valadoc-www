@@ -26,6 +26,11 @@
 		return Path.build_filename (Config.BASE_URL == "" ? "./" : Config.BASE_URL + "/" , package.name, "index.html");
 	}
 
+	protected new string translate_wiki_name (WikiPage page) {
+		var name = page.name;
+		return name.substring (0, name.last_index_of_char ('.')).replace ("/", ".") + ".html";
+	}
+
 	protected override string? from_package_to_package (Api.Package from, Api.Package to) {
 		return Path.build_filename (Config.BASE_URL == "" ?  "../" : Config.BASE_URL + "/", to.name, "index.html");
 	}
