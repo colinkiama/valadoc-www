@@ -31,6 +31,7 @@ jobs:
           -y \
           --no-install-recommends \
           gcc \
+          gobject-introspection \
           libgee-0.8-dev \
           git \
           libguestfs-gobject-dev \
