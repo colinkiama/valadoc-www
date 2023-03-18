@@ -58,6 +58,7 @@ jobs:
         run: npm ci && npm run build
 
       - name: Upload GitHub Pages artifiact
+        uses: actions/upload-pages-artifact@v1.0.7
         inputs:
           path: "valadoc.org"
 
@@ -81,4 +82,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
