@@ -7,6 +7,12 @@ This project generates a version of the valadoc.org website that is statically g
 The goal is for people to easily have a local copy of valadoc.org,
 that can also be statically hosted and can easily be experimented on.
 
+## Screenshots
+
+![valadoc-www home page](img/valadoc-www.png)
+
+![valadoc-www home page in dark theme](img/valadoc-www-dark.png)
+
 ## Build Instructions
 
 In order to build the docs you will need the following:
@@ -100,7 +106,7 @@ Check out the top of the `task/build` and `task/run` files for environment varia
 
 Two more important options to note are these variables that affect the `task/build` script.
 
-`DISABLE_GIRS_REPO` and `DISABLE_EXTRA_VAPIS_REPO`. By setting them to `true` (or any other value that isn't `false` or an empty string), the `task/build` script skips the steps of cloning each respective Git repository. This helps you save a lot of space and time, especially when you disable the `vala-girs` with the `DISABLE_GIRS_REPO` option (it's takes up 200MB worth of disk space).
+`DISABLE_GIRS_REPO` and `DISABLE_EXTRA_VAPIS_REPO`. By setting them to `true` (or any other value that isn't `false` or an empty string), the `task/build` script skips the steps of cloning each respective Git repository. This helps you save a lot of space and time, especially when you disable the `vala-girs` with the `DISABLE_GIRS_REPO` option (it takes up 200MB worth of disk space).
 
 Warning: Due to the way meson works, if you set some of these variables, the options
 are saved, even if you run the `task/build` command again with no environment variables the next time. In cases where you just want the default behaviour to happen, it's recommended to either:
@@ -203,12 +209,11 @@ Vala.Symbol.Name
 
 ## Tool Overview
 
-- _generator:_ Parses `packages.xml` files describing all packages. It is responsible for building
+- _build/generator:_ Parses `packages.xml` files describing all packages. It is responsible for building
   up the page. It fetches resources such as images from specified sources, computes valadoc-calls,
-  builds documentation for specified packages and puts-together the whole page. (`make serve`, `make serve-mini`)
-- _configgen:_ Used to generate configuration files for our search index.
-- _valadoc-example-gen:_ Internally used to generate example listings.
-- _valadoc-example-tester:_ Compiles and checks all registered examples. (`make test-examples`)
+  builds documentation for specified packages and puts-together the whole page.
+- _build/valadoc-example-gen:_ Internally used to generate example listings.
+- _build/valadoc-example-tester:_ Compiles and checks all registered examples.
 
 ## Common Pitfalls
 
@@ -222,19 +227,6 @@ Other errors:
 
 - Check `LOG` in the root of this repo for more information
 - Have you run out of disk space?
-
-## Quirks
-
-### What does the generated libdoclet file do?
-
-Generator program loads it dynamically. Valadoc uses it to generate documentation
-content. Please do not change name of this file. Valadoc itself looks for it.
-
-### There's a doclet header and vapi file but it's unused
-
-Meson doesn't provide a way to easily configure the library/module builds to disable
-generation of vapi files and C Headers. Better to leave it alone until it actually
-becomes a problem. The build script stays a lot simpler this way :)
 
 ## Contact And Help
 
