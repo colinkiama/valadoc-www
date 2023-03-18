@@ -3,13 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta itemprop="image" content="https://valadoc.org/images/preview.png">
+    <meta itemprop="image" content="{{base_url}}/images/preview.png">
     <meta name="fragment" content="!">
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#403757">
-    <meta itemprop="url" content="https://valadoc.org/" />
+    <meta itemprop="url" content="{{base_url}}" />
     <meta property="og:description" content="The canonical source for Vala API references.">
-    <meta property="og:image" content="https://valadoc.org/images/preview.png">
+    <meta property="og:image" content="{{base_url}}/images/preview.png">
     <meta property="og:title" content="{{title}}">
     <meta property="og:type" content="website">
     <title>{{title}}</title>
@@ -57,8 +57,8 @@
     </div>
     <footer>
         Copyright ©
-        {{if year}}{{year}}{{end}} Valadoc.org | Documentation is licensed under the same terms as its upstream |
-        <a href="https://github.com/vala-lang/valadoc-org/issues" target="_blank">Report an Issue</a>
+        {{if year}}{{year}}{{end}} {{base_url}} | Documentation is licensed under the same terms as its upstream |
+        <a href="https://github.com/colinkiama/valadoc-www/issues" target="_blank">Report an Issue</a>
     </footer>
     <script type="text/javascript" src="{{base_url}}/scripts/main.js"></script>
 </body>
