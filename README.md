@@ -183,7 +183,7 @@ Copy your examples to `examples/<vapi-name>/` and add a new entry to `examples/<
 </example>
 ```
 
-If this is the first example for the package, add a line to the `check-examples` target of `Makefile`.
+If this is the first example for the package, add a line to the `examples.txt`.
 
 ## Add Handwritten Documentation
 
@@ -211,9 +211,9 @@ Vala.Symbol.Name
 
 - _build/generator:_ Parses `packages.xml` files describing all packages. It is responsible for building
   up the page. It fetches resources such as images from specified sources, computes valadoc-calls,
-  builds documentation for specified packages and puts-together the whole page.
+  builds documentation for specified packages and puts-together the whole page. (`task/run`)
 - _build/valadoc-example-gen:_ Internally used to generate example listings.
-- _build/valadoc-example-tester:_ Compiles and checks all registered examples.
+- _build/valadoc-example-tester:_ Compiles and checks all registered examples. (`task/test_examples`)
 
 ## Common Pitfalls
 
