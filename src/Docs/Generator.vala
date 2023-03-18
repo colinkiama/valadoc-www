@@ -1,4 +1,4 @@
-/* generator.vala
+/* Generator.vala
  *
  * Copyright (C) 2012-2013  Florian Brosch
  *
@@ -85,6 +85,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 	private static string output_directory;
 	private static string metadata_path;
 	private static string docletpath;
+	private static string example_generator_directory;
 	private static bool download_images;
 	private static string prefix;
 	private static bool skip_existing;
@@ -125,6 +126,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		{ "target-glib", 0, 0, OptionArg.STRING, ref target_glib, "Target version of glib for code generation", "MAJOR.MINOR" },
 		{ "download-images", 0, 0, OptionArg.NONE, ref download_images, "Download images", null },
 		{ "doclet", 0, 0, OptionArg.STRING, ref docletpath, "Name of an included doclet or path to custom doclet", "PLUGIN"},
+		{ "example-generator-directory", 0, 0, OptionArg.STRING, ref example_generator_directory, "Look for example generator in DIRECTORY", "DIRECTORY"},
 		{ "vapidir", 0, 0, OptionArg.FILENAME_ARRAY, ref vapidirs, "Look for package bindings in DIRECTORY", "[DIRECTORY]"},
 		{ "skip-existing", 0, 0, OptionArg.NONE, ref skip_existing, "Skip existing packages", null },
 		{ "no-check-certificate", 0, 0, OptionArg.NONE, ref wget_no_check_certificate, "Pass --no-check-certificate to wget", null },
@@ -322,8 +324,8 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		}
 
 		public Package (string name, string? girs = null, string? maintainers = null, string? home = null, string? c_docs = null, string? vapi_image_source = null, string? gallery = null, string? flags = null, bool is_deprecated = false) {
-			devhelp_link = "/" + name + "/" + name + ".tar.bz2";
-			online_link = "/" + name + "/index.htm";
+			devhelp_link = (Config.BASE_URL == "" ? "./" : Config.BASE_URL + "/") + name + "/" + name + ".tar.bz2";
+			online_link = (Config.BASE_URL == "" ? "./" + name + "/" : Config.BASE_URL + "/" + name + "/") + "index.html";
 			this.is_deprecated = is_deprecated;
 			this.maintainers = maintainers;
 			this.gir_names = girs != null ? girs.split (",") : null;
@@ -460,7 +462,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 	}
 
 	private abstract class Renderer {
-		public abstract void render (string path, Gee.Collection<Node> sections);
+		public abstract string render (string path, Gee.Collection<Node> sections);
 		public abstract void render_section (Section section);
 		public abstract void render_package (Package pkg);
 		public abstract void render_external_package (ExternalPackage pkg);
@@ -494,9 +496,10 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		return packages;
 	}
 
-	private void generate_navigation (string path) {
-		GLib.FileStream file = GLib.FileStream.open (path, "w");
-		var writer = new Html.MarkupWriter (file, false);
+	private void generate_navigation () {
+		var navigation_builder = new StringBuilder ();
+		var writer = new Html.MarkupWriter.builder (navigation_builder, false);
+		
 
 		writer.start_tag ("div", {"class", "site_navigation"});
 		writer.start_tag ("ul");
@@ -515,6 +518,9 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		writer.end_tag ("ul");
 		writer.end_tag ("div");
+
+		var navigation_symbol = template_scope.get ("navigation");
+		navigation_symbol.assign_string (navigation_builder.str);
 	}
 
 	private class IndexRenderer : Renderer {
@@ -523,10 +529,10 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		private Html.MarkupWriter writer;
 		private int header_level = HEADER_LEVEL_START;
 
-		public override void render (string path, Gee.Collection<Node> sections) {
-			GLib.FileStream file = GLib.FileStream.open (path, "w");
-			writer = new Html.MarkupWriter (file, false);
-
+		public override string render (string path, Gee.Collection<Node> sections) {
+			var content_builder = new StringBuilder ();
+			writer = new Html.MarkupWriter.builder (content_builder, false);
+	
 			// Intro:
 			writer.start_tag ("h1").text ("Guides & References").end_tag ("h1");
 
@@ -581,6 +587,8 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			}
 
 			writer = null;
+
+			return content_builder.str;
 		}
 
 		public override void render_section (Section section) {
@@ -627,7 +635,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			}
 
 			if (pkg is ExternalPackage) {
-				writer.simple_tag ("img", {"src", "/images/external_link.svg", "alt", "This valadoc is on another site"});
+				writer.simple_tag ("img", {"src", (Config.BASE_URL == "" ? "." : Config.BASE_URL) + "/images/external_link.svg", "alt", "This valadoc is on another site"});
 			}
 
 			writer.start_tag ("div", {"class", "links"});
@@ -707,20 +715,73 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 	private void generate_index (string path) {
 		IndexRenderer renderer = new IndexRenderer ();
-		renderer.render (path, sections);
+		string index_content = renderer.render (path, sections);
+
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string ("valadoc-www - Learn Vala, do Future");
+
+		var content_symbol = template_scope.get ("content");
+		content_symbol.assign_string (index_content);
+		template_scope.set_string("base_url",  Config.BASE_URL == "" ? "." : Config.BASE_URL);
 
 		try {
 			copy_data ();
 		} catch (Error e) {
 			reporter.simple_error (null, "error: Can't copy data: %s", e.message);
 		}
+
+		try {
+			FileUtils.set_contents (path, page_template.expand_string (template_scope));
+
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 	}
 
 	public void generate (string path) {
 		stdout.printf ("generate index ...\n");
 
-		generate_navigation (path + ".navi.tpl");
-		generate_index (path + ".content.tpl");
+		generate_navigation ();
+		generate_index (path);
+		generate_markup_page ();
+		generate_stylesheet ();
+	}
+
+	public void generate_markup_page () {
+		string markup_page_content;
+
+		try {
+			FileUtils.get_contents ("static/markup-content.htm", out markup_page_content);
+			template_scope.set_string("title", "Valadoc Markup");
+			template_scope.set_string ("content", markup_page_content);
+			template_scope.set_string ("navigation", "");
+			FileUtils.set_contents ("valadoc.org/markup.html",page_template.expand_string (template_scope));
+		}
+		catch (GLib.Error ex) {
+			error ("Error: %s", ex.message);
+		}
+	}
+
+	public void generate_stylesheet () {
+		var stylesheet_template = new Template.Template (null);
+		var stylesheet_template_file = GLib.File.new_for_path("templates/main.css.tmpl");
+
+		try {
+			stylesheet_template.parse_file (stylesheet_template_file, null);
+
+			var stylesheet_template_scope = new Template.Scope ();
+			stylesheet_template_scope.set_string (
+				"base_url", 
+				Config.BASE_URL == "" ? ".." : Config.BASE_URL
+			);
+
+			FileUtils.set_contents (
+				"data/styles/main.css", 
+				stylesheet_template.expand_string (stylesheet_template_scope)
+			);
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 	}
 
 	public void regenerate_all_known_packages () throws Error {
@@ -888,7 +949,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 				string? standard_output = null;
 				string? standard_error = null;
 
-				string command = "./valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_path, output, "documentation/%s/wiki".printf (pkg.name));
+				string command = "\"%s\"/valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_generator_directory, example_path, output, "documentation/%s/wiki".printf (pkg.name));
 				Process.spawn_command_line_sync (command, out standard_output, out standard_error, out exit_status);
 
 				stdout.printf ("%s\n", command);
@@ -1318,6 +1379,10 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			docletpath = ".";
 		}
 
+		if (example_generator_directory == null) {
+			example_generator_directory = ".";
+		}
+
 		if (vapidirs == null) {
 			stdout.printf ("error: --vapidir is missing\n");
 			return -1;
@@ -1360,7 +1425,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 				return -1;
 			}
 
-			string index = Path.build_path (Path.DIR_SEPARATOR_S, output_directory, "index.htm");
+			string index = Path.build_path (Path.DIR_SEPARATOR_S, output_directory, "index.html");
 			generator.generate (index);
 
 			generator.generate_configs (output_directory);

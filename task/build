@@ -1,0 +1,54 @@
+#!/usr/bin/env sh
+#
+# Performs build operations of the website generator program
+# documentation example utility programs, and website assets. 
+BASE_URL=${BASE_URL:-""}
+VALAC_VERSION=${VALAC_VERSION:-""}
+VALADOC_VERSION=${VALADOC_VERSION:-""}
+DISABLE_GIRS_REPO=${DISABLE_GIRS_REPO:-"false"}
+DISABLE_EXTRA_VAPIS_REPO=${DISABLE_EXTRA_VAPIS_REPO:-"false"}
+
+# Install Node Modules.
+if [ ! -d "./node_modules" ]; then
+    npm install
+fi
+
+BUILD_OPTIONS=''
+
+if [ -n "${BASE_URL}" ]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dbase_url=${BASE_URL}"
+fi
+
+if [ -n "${VALAC_VERSION}" ]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dvalac_version${VALAC_VERSION}"
+fi
+
+if [ -n "${VALADOC_VERSION}" ]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dvaladoc_version${VALADOC_VERSION}"
+fi
+
+# Setup meson build build directory and configure build options.
+if [ -d "./build" ]; then
+    eval meson setup"${BUILD_OPTIONS}" --reconfigure build
+else
+    eval meson setup"${BUILD_OPTIONS}" build
+fi
+
+# Build website generator and example utilities.
+ninja -C build
+
+# Clone vala-girs and extra-vapis Git Repositories if directories for them 
+# aren't present or, it's not possible to pull in changes from their
+# directories.
+
+if [ "${DISABLE_GIRS_REPO}" = "false" ]; then
+    if [ ! -d girs ] || ! git -C girs pull; then
+        git clone https://github.com/nemequ/vala-girs.git girs --depth 1
+    fi
+fi
+
+if [ "${DISABLE_EXTRA_VAPIS_REPO}" = "false" ]; then
+    if [ ! -d extra-vapis ] || ! git -C extra-vapis pull; then 
+        git clone https://gitlab.gnome.org/GNOME/vala-extra-vapis.git extra-vapis --depth 1
+    fi
+fi

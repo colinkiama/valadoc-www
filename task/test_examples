@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+#
+# Checks manually written examples
+
+eval build/valadoc-example-tester --keep-running --force \
+    "$(cat examples.txt)"

@@ -1,4 +1,4 @@
-/* doclet.vala
+/* Doclet.vala
  *
  * Copyright (C) 2012 Florian Brosch
  *
@@ -20,7 +20,8 @@
  * 	Florian Brosch <flo.brosch@gmail.com>
  */
 
-public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
+ using Template;
+ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 	public const string css_path_package = "styles/main.css";
 	public const string css_path_wiki = "../styles/main.css";
 	public const string css_path = "../styles/main.css";
@@ -28,6 +29,9 @@ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 	public const string js_path_package = "scripts/main.js";
 	public const string js_path_wiki = "../scripts/main.js";
 	public const string js_path = "../scripts/main.js";
+	
+	public Template.Template page_template;
+	public Template.Scope template_scope;
 
 	private IndexMarkupWriter index_xml;
 
@@ -50,9 +54,25 @@ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 			return name == "node";
 		}
 	}
+	
 
 	construct {
-		package_list_link = "/index.htm";
+		package_list_link = (Config.BASE_URL == "" ? "./" : Config.BASE_URL + "/")  + "index.html";
+		page_template = page_template = new Template.Template (null);
+		var template_file = File.new_for_path ("templates/valadoc.tmpl");
+	
+		try {
+			page_template.parse_file (template_file, null);
+			template_scope = new Template.Scope ();
+
+			var year_symbol = template_scope.get("year");
+			year_symbol.assign_string (new DateTime.now_local ().get_year ().to_string ());
+
+			var base_url_symbol = template_scope.get("base_url");
+			base_url_symbol.assign_string ((Config.BASE_URL == "" ? ".." : Config.BASE_URL)); 
+		} catch (GLib.Error ex) {
+			error ("%s\n", ex.message);
+		}
 	}
 
 	private void register_package_start (Api.Package pkg, string path) {
@@ -155,16 +175,30 @@ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 	}
 
 	protected override void write_wiki_page (WikiPage page, string contentp, string css_path, string js_path, string pkg_name) {
-		string basic_path = Path.build_filename(contentp, page.name.substring (0, page.name.length-7).replace ("/", ".")+"htm");
+		string file_path = Path.build_filename(contentp, page.name.substring (0, page.name.length-7).replace ("/", ".")+"html");
 
-		GLib.FileStream file = GLib.FileStream.open (basic_path + ".content.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var content_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (content_builder, false);
 		_renderer.set_writer (writer);
-
+		
 		_renderer.set_container (page);
 		_renderer.render (page.documentation);
+		
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string (page.name);
+		
+		var content_symbol = template_scope.get ("content");
+		content_symbol.assign_string (content_builder.str);
+		
+		var navigation_symbol = template_scope.get ("navigation");
+		navigation_symbol.assign_string ("");
+		template_scope.set_string ("navigation", "");
 
-		file = GLib.FileStream.open (basic_path + ".navi.tpl", "w");
+		try {
+			FileUtils.set_contents (file_path, page_template.expand_string (template_scope));
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 	}
 
 	public override void process (Settings settings, Api.Tree tree, ErrorReporter reporter) {
@@ -210,19 +244,33 @@ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 		FileStream index_xml_file = FileStream.open (GLib.Path.build_filename (path, "index.xml"), "w");
 		index_xml = new IndexMarkupWriter (index_xml_file);
 
-		string index_path = GLib.Path.build_filename (path, "index.htm");
+		string index_path = GLib.Path.build_filename (path, "index.html");
 		register_package_start (package, index_path);
 
-		GLib.FileStream file = GLib.FileStream.open (index_path + ".navi.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var navigation_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (navigation_builder, false);
 		_renderer.set_writer (writer);
 		write_navi_package (package);
 
-		file = GLib.FileStream.open (index_path + ".content.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var content_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (content_builder, false);
 		_renderer.set_writer (writer);
 		write_package_content (package, package);
 
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string (pkg_name);
+
+		var content_symbol = template_scope.get ("content");
+		content_symbol.assign_string (content_builder.str);
+		
+		var navigation_symbol = template_scope.get("navigation");
+		navigation_symbol.assign_string (navigation_builder.str);
+
+		try {
+			FileUtils.set_contents (index_path, page_template.expand_string (template_scope));
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 
 		package.accept_all_children (this);
 
@@ -235,15 +283,30 @@ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 		if (ns.name != null) {
 			register_node (ns);
 
-			GLib.FileStream file = GLib.FileStream.open (rpath + ".navi.tpl", "w");
-			writer = new Html.MarkupWriter (file, false);
+			var navigation_builder = new StringBuilder ();
+			writer = new Html.MarkupWriter.builder (navigation_builder, false);	
 			_renderer.set_writer (writer);
 			write_navi_symbol (ns);
 
-			file = GLib.FileStream.open (rpath + ".content.tpl", "w");
-			writer = new Html.MarkupWriter (file, false);
+			var content_builder = new StringBuilder ();
+			writer = new Html.MarkupWriter.builder (content_builder, false);
 			_renderer.set_writer (writer);
 			write_namespace_content (ns, ns);
+
+			var title_symbol = template_scope.get ("title");
+			title_symbol.assign_string (ns.get_full_name ());
+
+			var content_symbol = template_scope.get ("content");
+			content_symbol.assign_string (content_builder.str);
+			
+			var navigation_symbol = template_scope.get("navigation");
+			navigation_symbol.assign_string (navigation_builder.str);
+
+			try {
+				FileUtils.set_contents (rpath, page_template.expand_string (template_scope));
+			} catch (GLib.Error ex) {
+				error ("%s", ex.message);
+			}
 		}
 
 		ns.accept_all_children (this);
@@ -253,9 +316,8 @@ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 		string rpath = this.get_real_path (node);
 		register_node (node);
 
-
-		GLib.FileStream file = GLib.FileStream.open (rpath + ".navi.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var navigation_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (navigation_builder, false);
 		_renderer.set_writer (writer);
 
 		if (is_internal_node (node)) {
@@ -264,12 +326,25 @@ public class Valadoc.ValadocOrgDoclet : Valadoc.Html.BasicDoclet {
 			write_navi_leaf_symbol (node);
 		}
 
-
-		file = GLib.FileStream.open (rpath + ".content.tpl", "w");
-		writer = new Html.MarkupWriter (file, false);
+		var content_builder = new StringBuilder ();
+		writer = new Html.MarkupWriter.builder (content_builder, false);
 		_renderer.set_writer (writer);
 		write_symbol_content (node);
 
+		var title_symbol = template_scope.get ("title");
+		title_symbol.assign_string (node.get_full_name ());
+
+		var content_symbol = template_scope.get ("content");
+		content_symbol.assign_string (content_builder.str);
+		
+		var navigation_symbol = template_scope.get("navigation");
+		navigation_symbol.assign_string (navigation_builder.str);
+
+		try {
+			FileUtils.set_contents (rpath, page_template.expand_string (template_scope));
+		} catch (GLib.Error ex) {
+			error ("%s", ex.message);
+		}
 
 		if (accept_all_children) {
 			node.accept_all_children (this);
