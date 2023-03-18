@@ -7,6 +7,8 @@ This project generates a version of the valadoc.org website that is statically g
 The goal is for people to easily have a local copy of valadoc.org,
 that can also be statically hosted and can easily be experimented on.
 
+You can view the output of a `core` preset build here: https://colinkiama.github.io/valadoc-www/
+
 ## Screenshots
 
 ![valadoc-www home page](img/valadoc-www.png)

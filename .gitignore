@@ -31,3 +31,4 @@
 !.editorconfig
 !.stylelintrc.json
 !.dockerignore
+!.nojekyll
