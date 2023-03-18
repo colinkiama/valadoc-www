@@ -231,7 +231,7 @@ Other errors:
 ## Contact And Help
 
 - [Git Repository](https://github.com/colinkiama/valadoc-www)
-- [Issue Tracker, valadoc.org](https://github.com/colinkiama/valadoc-www/issues)
+- [Issue Tracker, valadoc-www](https://github.com/colinkiama/valadoc-www/issues)
 - [Issue Tracker, valadoc (now a part of Vala)](https://gitlab.gnome.org/GNOME/vala/issues)
-- IRC: irc.gnome.org, #vala (flo, UTC+01:00)
-- Mail: colinkiama@gmail.com
+- Matrix: <https://matrix.to/#/#vala:gnome.org> (#vala:gnome.org)
+- Mail: [colinkiama@gmail.com](mailto:colinkiama@gmail.com)
