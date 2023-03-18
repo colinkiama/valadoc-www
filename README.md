@@ -26,15 +26,11 @@ In order to build the docs you will need the following:
 On elementary OS or Ubuntu run:
 
 ```bash
+sudo apt install software-properties-common
 sudo add-apt-repository ppa:vala-team
 sudo apt update
-sudo apt install meson ninja-build valac valadoc libvaladoc-dev libtemplate-glib-1.0-dev unzip
-```
-
-Arch or derivatives run:
-
-```bash
-pacman -S meson ninja vala template-glib
+sudo apt install gcc libgirepository1.0-dev libgee-0.8-dev git libtemplate-glib-1.0-dev \
+libvaladoc-dev meson ninja-build unzip valac valadoc wget xsltproc
 ```
 
 Next, install JS dependencies:
