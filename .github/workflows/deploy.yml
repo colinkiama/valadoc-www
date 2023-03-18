@@ -60,7 +60,7 @@ jobs:
 
       - name: Upload GitHub Pages artifiact
         uses: actions/upload-pages-artifact@v1.0.7
-        inputs:
+        with:
           path: "valadoc.org"
 
   # Deploy job
