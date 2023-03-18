@@ -59,10 +59,10 @@
 	construct {
 		package_list_link = (Config.BASE_URL == "" ? "./" : Config.BASE_URL + "/")  + "index.html";
 		page_template = page_template = new Template.Template (null);
-		var templateFile = File.new_for_path ("templates/valadoc.tmpl");
+		var template_file = File.new_for_path ("templates/valadoc.tmpl");
 	
 		try {
-			page_template.parse_file (templateFile, null);
+			page_template.parse_file (template_file, null);
 			template_scope = new Template.Scope ();
 
 			var year_symbol = template_scope.get("year");
