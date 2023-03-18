@@ -50,7 +50,7 @@ jobs:
 
       - name: Build the documentation
         run: |
-          task/build GENERATOR_OPTS="" \
+          task/build DISABLE_GIRS_REPO="true" DISALE_EXTRA_VAPIS_REPO="true" GENERATOR_OPTS="" \
           && PRESET=core task/run
 
       - name: Upload GitHub Pages artifiact
@@ -78,4 +78,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v1
