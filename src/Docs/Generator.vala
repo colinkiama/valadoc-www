@@ -743,7 +743,23 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		generate_navigation ();
 		generate_index (path);
+		generate_markup_page ();
 		generate_stylesheet ();
+	}
+
+	public void generate_markup_page () {
+		string markup_page_content;
+
+		try {
+			FileUtils.get_contents ("static/markup-content.htm", out markup_page_content);
+			template_scope.set_string("title", "Valadoc Markup");
+			template_scope.set_string ("content", markup_page_content);
+			template_scope.set_string ("navigation", "");
+			FileUtils.set_contents ("valadoc.org/markup.html",page_template.expand_string (template_scope));
+		}
+		catch (GLib.Error ex) {
+			error ("Error: %s", ex.message);
+		}
 	}
 
 	public void generate_stylesheet () {
