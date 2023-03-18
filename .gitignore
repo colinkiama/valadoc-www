@@ -32,3 +32,4 @@
 !.stylelintrc.json
 !.dockerignore
 !.nojekyll
+!.github
