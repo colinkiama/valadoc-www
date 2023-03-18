@@ -48,12 +48,14 @@ jobs:
           task/build GENERATOR_OPTS="" \
           && PRESET=core task/run
 
-      - name: Build website assets with Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        steps:
+          uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-        run: |
-          npm ci && npm run build
+
+      - name: Build Static Assets
+        run: npm ci && npm run build
 
       - name: Upload GitHub Pages artifiact
         inputs:
