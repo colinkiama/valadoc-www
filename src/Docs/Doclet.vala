@@ -57,7 +57,7 @@
 	
 
 	construct {
-		package_list_link = (Config.BASE_URL == "" ? "./" : Config.BASE_URL + "/")  + "index.html";
+		package_list_link = (Config.BASE_URL == "" ? "../" : Config.BASE_URL + "/")  + "index.html";
 		page_template = page_template = new Template.Template (null);
 		var template_file = File.new_for_path ("templates/valadoc.tmpl");
 	
