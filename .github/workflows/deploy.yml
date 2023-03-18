@@ -11,9 +11,6 @@ on:
 jobs:
   # Build job
   build:
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +32,7 @@ jobs:
           libgee-0.8-dev \
           git \
           libguestfs-gobject-dev \
+          libtemplate-glib-1.0-0 \
           libtemplate-glib-1.0-dev \
           libvaladoc-0.58-dev \
           meson \
@@ -54,7 +52,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18
 
       - name: Build Static Assets
         run: npm ci && npm run build
