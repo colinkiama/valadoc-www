@@ -1,3 +1,5 @@
+name: Deploy
+
 on:
   push:
     branches:
@@ -49,8 +51,7 @@ jobs:
           && PRESET=core task/run
 
       - name: Use Node.js ${{ matrix.node-version }}
-        steps:
-          uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
